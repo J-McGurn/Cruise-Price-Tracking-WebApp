@@ -1,0 +1,62 @@
+.price-graph-container {
+  margin: 30px auto;
+  padding: 20px;
+  max-width: 850px;
+  background-color: #f7f7f7;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.graph-title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.dropdown-row {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.dropdown-row label {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.dropdown-row select {
+  padding: 4px 6px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.add-btn, .remove-btn {
+  margin-left: 10px;
+  padding: 5px 10px;
+  border: none;
+  background-color: #4a90e2;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-btn-container {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.add-btn:hover, .remove-btn:hover {
+  background-color: #357ab8;
+}
+
+.line-chart {
+  margin-top: 20px;
+}
+
+.instruction-text {
+  text-align: center;
+  margin-top: 20px;
+  color: #555;
+}
