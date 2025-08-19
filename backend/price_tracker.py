@@ -131,7 +131,7 @@ for cruise_code in cruise_codes:
                     price_data = price_info.get('price')
                     price_val = price_data.get('parsedValue') if isinstance(price_data, dict) else price_data
 
-                    if fare == "KU2":
+                    if fare == "KU2" or fare == "FU2":
                         fares["Saver"]["price"] = price_val
                     elif fare == "KD1":
                         fares["Select"]["price"] = price_val
