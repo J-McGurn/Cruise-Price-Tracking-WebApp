@@ -1,18 +1,30 @@
+/* General container for the graph */
 .price-graph-container {
   margin: 30px auto;
   padding: 20px;
-  max-width: 850px;
+  width: 95%;       /* almost full page width */
+  max-width: 1600px; /* optional max width if you want to limit extremely large screens */
   background-color: #f7f7f7;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
+.line-chart {
+  margin-top: 20px;
+  width: 100%;  /* full width of the container */
+  height: 500px; /* taller for readability */
+}
+
+
+/* Title */
 .graph-title {
   text-align: center;
   margin-bottom: 20px;
   color: #333;
+  font-size: 1.5rem;
 }
 
+/* Dropdown row styling */
 .dropdown-row {
   margin-bottom: 15px;
   display: flex;
@@ -32,31 +44,85 @@
   border: 1px solid #ccc;
 }
 
+/* Buttons */
 .add-btn, .remove-btn {
   margin-left: 10px;
-  padding: 5px 10px;
+  padding: 6px 12px;
   border: none;
   background-color: #4a90e2;
   color: white;
   border-radius: 4px;
   cursor: pointer;
-}
-
-.add-btn-container {
-  text-align: center;
-  margin-top: 10px;
+  font-size: 0.9rem;
 }
 
 .add-btn:hover, .remove-btn:hover {
   background-color: #357ab8;
 }
 
-.line-chart {
-  margin-top: 20px;
+/* Container to center the add button */
+.add-btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
 }
 
+/* Line chart container */
+.line-chart {
+  margin-top: 20px;
+  width: 100%; /* full width of container */
+  overflow-x: auto; /* allow horizontal scroll if too many dates */
+}
+
+/* Instruction text */
 .instruction-text {
   text-align: center;
   margin-top: 20px;
   color: #555;
+}
+
+/* Custom legend below graph */
+.custom-legend {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.custom-legend span {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 12px;
+  font-size: 0.9rem;
+}
+
+.custom-legend span .legend-color-box {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dropdown-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .add-btn {
+    width: 80%;
+    max-width: 250px;
+  }
+
+  .price-graph-container {
+    padding: 10px;
+  }
+
+  .graph-title {
+    font-size: 1.3rem;
+  }
+
+  .custom-legend span {
+    margin: 6px;
+    font-size: 0.8rem;
+  }
 }

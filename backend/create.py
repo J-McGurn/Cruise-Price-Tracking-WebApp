@@ -1,6 +1,6 @@
 import sqlite3
 
-# Create a new database (or overwrite existing if you rename it)
+# Create a new database
 conn = sqlite3.connect("cruises.db")  # <- new DB file
 cursor = conn.cursor()
 

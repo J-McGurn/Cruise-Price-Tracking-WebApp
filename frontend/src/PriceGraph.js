@@ -19,7 +19,6 @@ function PriceGraph() {
     const updated = [...selectedCruises];
     updated[index][field] = value;
 
-    // Reset dependent fields
     if (field === 'cruise_code') {
       updated[index].cabin_type = '';
       updated[index].fare_type = '';
@@ -39,9 +38,20 @@ function PriceGraph() {
     setSelectedCruises(updated);
   };
 
-  const colors = ['#df1212', '#1212df', '#12df12', '#df12df', '#df9e12'];
+  const colors = [
+  '#df1212', '#1212df', '#12df12', '#df12df', '#df9e12',
+  '#12dfdf', '#df5612', '#5612df', '#12df56', '#df12a6'
+];
 
-  // Prepare datasets for each selected cruise
+const getColor = idx => colors[idx % colors.length];
+
+  // Build cruiseMap for code → name mapping
+  const cruiseMap = cruises.reduce((acc, c) => {
+    acc[c.cruise_code] = c.cruise_name;
+    return acc;
+  }, {});
+
+  // Prepare datasets
   const chartDataSets = selectedCruises.map(sel => {
     if (!sel.cruise_code || !sel.cabin_type || !sel.fare_type) return [];
 
@@ -53,9 +63,8 @@ function PriceGraph() {
     return data;
   }).filter(ds => ds.length > 0);
 
-  // Merge dates for X-axis
   const allDates = Array.from(new Set(chartDataSets.flatMap(ds => ds.map(d => d.date)))).sort(
-    (a, b) => new Date(a.date) - new Date(b.date)
+    (a, b) => new Date(a) - new Date(b)
   );
 
   const mergedData = allDates.map(date => {
@@ -77,10 +86,14 @@ function PriceGraph() {
 
       {selectedCruises.map((sel, idx) => (
         <div key={idx} className="dropdown-row">
-          <label>Cruise Code: </label>
+          <label>Cruise: </label>
           <select value={sel.cruise_code} onChange={e => handleChange(idx, 'cruise_code', e.target.value)}>
             <option value="">--Select--</option>
-            {cruiseOptions.map(c => <option key={c} value={c}>{c}</option>)}
+            {cruiseOptions.map(c => (
+              <option key={c} value={c}>
+                {c} – {cruiseMap[c] || 'Unknown'}
+              </option>
+            ))}
           </select>
 
           <label>Cabin Type: </label>
@@ -108,7 +121,7 @@ function PriceGraph() {
       </div>
 
       {mergedData.length > 0 ? (
-        <LineChart className="line-chart" width={800} height={400} data={mergedData} margin={{ top: 20, right: 80, left: 20, bottom: 50 }}>
+        <><LineChart className="line-chart" width={window.innerWidth * 0.75} height={400} data={mergedData} margin={{ top: 20, right: 0, left: 0, bottom: 10 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="date">
             <Label value="Date Checked" offset={-10} position="insideBottom" />
@@ -117,18 +130,41 @@ function PriceGraph() {
             <Label value="Total Price (£)" angle={-90} position="insideLeft" style={{ textAnchor: 'middle' }} />
           </YAxis>
           <Tooltip />
-          <Legend verticalAlign="top" align="right" />
           {chartDataSets.map((_, idx) => (
             <Line
               key={idx}
               type="stepAfter"
               dataKey={`total_price_${idx}`}
-              stroke={colors[idx % colors.length]}
-              name={selectedCruises[idx].cruise_code}
-              connectNulls
-            />
+              stroke={getColor(idx)}
+              name={`${selectedCruises[idx].cruise_code} – ${cruiseMap[selectedCruises[idx].cruise_code] || ''}`}
+              connectNulls />
           ))}
         </LineChart>
+        <div style={{ textAlign: "center", marginTop: "10px" }}>
+          {selectedCruises.map((sel, idx) => (
+            <span
+              key={idx}
+              style={{
+                margin: "0 12px",
+                color: getColor(idx),
+                display: "inline-flex",
+                alignItems: "center"
+              }}
+            >
+              <span
+                style={{
+                  display: "inline-block",
+                  width: "12px",
+                  height: "12px",
+                  borderRadius: "50%",
+                  backgroundColor: getColor(idx),
+                  marginRight: "6px"
+                }}
+              />
+              {sel.cruise_code} – {cruiseMap[sel.cruise_code] || 'Unknown'}
+            </span>
+          ))}
+        </div></>
       ) : (
         <p className="instruction-text">Please select cruise, cabin, and fare type to view the graph.</p>
       )}
