@@ -7,16 +7,16 @@ from datetime import datetime
 app = Flask(__name__)
 CORS(app)  # Allow cross-origin requests
 
-
-DB_FILE = os.path.join(os.path.dirname(__file__), "cruises.db")
+DB_FILE = os.path.join(os.path.dirname(__file__), "all_cruises.db")
 print("Using database at:", DB_FILE)
 
-def get_cruises():
+
+def get_cruises(table_name):
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM cruises")  # fetch all columns
+    cursor.execute(f"SELECT * FROM {table_name}")  # fetch all columns
     rows = cursor.fetchall()
-    
+
     columns = [col[0] for col in cursor.description]
 
     cruises = []
@@ -39,9 +39,18 @@ def get_cruises():
     conn.close()
     return cruises
 
-@app.route("/cruises", methods=["GET"])
-def cruises():
-    return jsonify(get_cruises())
+
+# Endpoint for P&O
+@app.route("/cruises/po", methods=["GET"])
+def cruises_po():
+    return jsonify(get_cruises("po_cruises"))
+
+
+# Endpoint for Princess
+@app.route("/cruises/princess", methods=["GET"])
+def cruises_princess():
+    return jsonify(get_cruises("princess_cruises"))
+
 
 if __name__ == "__main__":
     app.run(debug=True)

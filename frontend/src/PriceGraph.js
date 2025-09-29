@@ -9,7 +9,7 @@ function PriceGraph() {
   ]);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/cruises')
+    fetch('http://127.0.0.1:5000/cruises/po')
       .then(res => res.json())
       .then(data => setCruises(data))
       .catch(err => console.error(err));

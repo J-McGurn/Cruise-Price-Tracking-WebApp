@@ -1,0 +1,262 @@
+import os
+import sqlite3
+import requests
+from datetime import datetime, date
+
+def main():
+    # === CONFIG ===
+    cruise_codes = [
+        "2522", "B605", "8618", "8620", "Y628", "4639",
+        "G649A", "B704", "N711", "Y716", "Y726", "1732"
+    ]
+
+    cabin_ids = {
+        "Inside": "IE",
+        "Outside": "OE",
+        "Balcony": "BE"
+    }
+
+    dictionary = {
+        "CB": "Caribbean Princess",
+        "CO": "Coral Princess",
+        "KP": "Crown Princess",
+        "DI": "Diamond Princess",
+        "XP": "Discovery Princess",
+        "EP": "Emerald Princess",
+        "EX": "Enchanted Princess",
+        "AP": "Grand Princess",
+        "IP": "Island Princess",
+        "MJ": "Majestic Princess",
+        "GP": "Regal Princess",
+        "RP": "Royal Princess",
+        "RU": "Ruby Princess",
+        "SA": "Sapphire Princess",
+        "YP": "Sky Princess",
+        "ST": "Star Princess",
+        "SP": "Sun Princess",
+        "FLL": "Fort Lauderdale",
+        "SOU": "Southampton",
+        "SEA": "Seattle",
+    }
+
+    today = date.today().isoformat()
+    USD_TO_GBP = 0.78
+
+    # === HEADERS/COOKIES ===
+    headers = {
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-GB,en;q=0.5",
+        "AppId": '{"agencyId":"DIRPB","cruiseLineCode":"PCL","sessionId":"532ab9fb-d710-4c27-a457-58ac07c8c132","systemId":"PB","gdsCookie":"CO=GB"}',
+        "BookingCompany": "PO",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json;charset=utf-8",
+        "Origin": "https://www.princess.com",
+        "pcl-client-id": "32e7224ac6cc41302f673c5f5d27b4ba",
+        "ProductCompany": "PC",
+        "Referer": "https://www.princess.com",
+        "ReqSrc": "W",
+        "Sec-Fetch-Dest": "empty",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-site",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0"
+    }
+
+    cookies = {
+        "countryCode": "GB",
+        "currencyCode": "GBP"
+    }
+
+    # === DATABASE SETUP ===
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    db_path = os.path.join(ROOT_DIR, "all_cruises.db")
+    conn = sqlite3.connect(db_path)
+
+    cursor = conn.cursor()
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS princess_cruises (
+        id             INTEGER PRIMARY KEY AUTOINCREMENT,
+        date_checked   TEXT,
+        cruise_code    TEXT,
+        cruise_name    TEXT,
+        ship_name      TEXT,
+        departure_port TEXT,
+        departure_date TEXT,
+        duration       INTEGER,
+        cabin_type     TEXT,
+        fare_type      TEXT,
+        cabin_price    REAL,
+        obc            REAL,
+        total_price    REAL
+    )
+    """)
+    conn.commit()
+
+    # === STEP 1: Get metadata dump once ===
+    url_meta = (
+        "https://gw.api.princess.com/pcl-web/internal/resdb/p1.0/products"
+        "?agencyCountry=GB&cruiseType=C&voyageStatus=A&webDisplay=Y"
+        "&promoFilter=all&light=false"
+    )
+    response_meta = requests.get(url_meta, headers=headers, cookies=cookies)
+    cruise_meta_list = []
+
+    if response_meta.status_code == 200:
+        cruise_meta_list = response_meta.json().get("products", [])
+        print(f"📥 Retrieved {len(cruise_meta_list)} cruises from metadata API")   
+    else:
+        print(f"❌ Failed to fetch metadata API ({response_meta.status_code})")
+
+
+    # === STEP 2: Loop through fares API ===
+    for cruise_code in cruise_codes:    
+        url_fares = f"https://gw.api.princess.com/pcl-web/internal/caps/pc/pricing/v1/cruises/{cruise_code}"
+        payload = {
+            "booking": {
+                "bookingAgency": {
+                    "id": "DIRPB",
+                    "address": {"stateId":"X","countryId":"GB"},
+                    "phones":[{"phoneTypeId":"W","number":"1234567"},{"phoneTypeId":"F","number":"11111111"}],
+                    "creditCardChargeFeesFlag":"Y",
+                    "countryCanBooks":["IE"],
+                    "borderCountries":["GB","GI","MT","IE"],
+                    "currencies":[{"id":"GBP"},{"id":"EUR"}],
+                    "collectDirectInfoFlag":"N",
+                    "dsms":[{"year":"2025","region":"R0","district":"00"}],
+                    "commissions":[{"year":"2025","associationCode":"@DEFAULT","association":"DEFAULT ASSOCIATION","salesProgram":"DI","typeFlag":"DIR"}],
+                    "internationalFaxFlag":"Y",
+                    "confirmationMethod":"F",
+                    "edocsFlag":"N"
+                },
+                "currencyCode":"GBP",
+                "guests":[{"country":"GB","homeCity":"LON"},{"country":"GB","homeCity":"LON"}],
+                "couponCodes":[]
+            },
+            "filters":{
+                "availabilities":["Y","G","B"],
+                "cruiseType":"C",
+                "cruises": [cruise_code],
+                "meta":"I"
+            },
+            "leadInBy":"itins",
+            "retrieveFlags":{
+                "additionalGuestFare": True,
+                "averageFare": False,
+                "fareType": "BESTFARE",
+                "includeMisc": False,
+                "includeTfpe": True,
+                "roundUpFare": True,
+                "subMeta": True,
+                "zones": True
+            }
+        }
+        
+        response_fares = requests.post(url_fares, json=payload, headers=headers, cookies=cookies)
+        
+        if response_fares.status_code != 200:
+            print(f"❌ Error {response_fares.status_code} for cruise {cruise_code}")
+            continue
+
+        fares_data = response_fares.json()
+        print(f"✅ Got fares for {cruise_code}")
+        
+        fare_products = fares_data.get("products", [])
+        if not fare_products:
+            raise ValueError(f"No products found for cruise code {cruise_code}")
+        else:
+            fare_product = fare_products[0]
+            meta_id = fare_product["id"]
+            
+            # -- Find corresponding metadata --
+            meta_product = next(
+                (p for p in cruise_meta_list if p.get("id") == meta_id),
+                None
+            )
+            if not meta_product:
+                raise ValueError(f"Product with id {meta_id} not found") 
+            
+            cruise_name = meta_product.get("name")
+            meta_cruise = next(
+                (c for c in meta_product.get("cruises", []) if c.get("id") == cruise_code),
+                None
+            )
+            if not meta_cruise:
+                raise ValueError(f"Cruise with id {cruise_code} not found under product {meta_id}")
+            ship_id = meta_cruise["voyage"]["ship"]["id"]
+            ship_name = dictionary.get(ship_id, ship_id)
+            departure_port_id = meta_cruise["voyage"]["startPortId"]
+            departure_port_name = dictionary.get(departure_port_id, departure_port_id)
+            departure_date = meta_cruise["voyage"]["sailDate"]
+            departure_date = datetime.strptime(departure_date, "%Y%m%d").strftime("%d/%m/%Y")
+            duration = meta_cruise["voyage"]["duration"]
+            
+            # -- Find cruise data --
+            cruise = fare_product.get("cruises", [])[0]
+            
+            # Flip mapping so we can look up cabin names by ID  
+            id_to_name = {v: k for k, v in cabin_ids.items()}
+            
+            fares = {
+                "BESTFARE": {},
+                "BESTVALUE": {}
+            }
+            
+            for fare in cruise.get("pricing", {}).get("fares", []):
+                faretype = fare.get("fareType")
+
+                for category in fare.get("categories", []):
+                    cabin_id = category.get("id")
+                    if cabin_id not in id_to_name:
+                        continue  # skip other cabin types
+                    cabin_name = id_to_name[cabin_id]
+
+                    # find guest 1
+                    guest1 = next((g for g in category.get("guests", []) if g.get("id") == 1), None)
+                    if not guest1:
+                        continue
+                    
+                    price = guest1.get("fare")
+                    obc_usd = guest1.get("obc", 0)
+                    obc = round(obc_usd * USD_TO_GBP, 2) if obc_usd else 0 # convert to GBP
+                    
+                    
+                    # save into fare_results
+                    fares[faretype][cabin_name] = {
+                        "price": price,
+                        "obc": obc,
+                        "net_price": price - obc  # adjust later if needed
+                    }
+                    
+            # === STEP 3: Insert Into DB ===
+            for fare_type, cabins in fares.items():
+                for cabin_name, data in cabins.items():
+                    if not data or not data.get("price"):
+                        continue
+
+                    cursor.execute("""
+                        INSERT INTO princess_cruises (
+                            date_checked, cruise_code, cruise_name, ship_name, departure_port,
+                            departure_date, duration, cabin_type, fare_type, cabin_price,
+                            obc, total_price
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, (
+                        today,
+                        cruise_code,
+                        cruise_name,
+                        ship_name,
+                        departure_port_name,
+                        departure_date,
+                        duration,
+                        cabin_name,
+                        fare_type,
+                        data["price"],
+                        data["obc"],
+                        data["net_price"]
+                    ))
+
+    conn.commit()
+    conn.close()
+    
+if __name__ == "__main__":
+    main()

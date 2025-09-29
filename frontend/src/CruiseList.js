@@ -10,7 +10,7 @@ function CruiseList() {
 
     if (cruises.length === 0) {
       try {
-        const response = await fetch('http://127.0.0.1:5000/cruises');
+        const response = await fetch('http://127.0.0.1:5000/cruises/po');
         const data = await response.json();
 
         // Filter to only distinct cruises by cruise_code
