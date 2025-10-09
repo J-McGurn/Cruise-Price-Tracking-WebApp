@@ -1,19 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
-function CruiseList() {
+function PrincessCruisesTable() {
   const [cruises, setCruises] = useState([]);
-  const [showCruises, setShowCruises] = useState(false);
 
-  const handleClick = async () => {
-    setShowCruises(!showCruises);
-
-    if (cruises.length === 0) {
+  // Fetch cruises when component mounts
+  useEffect(() => {
+    const fetchCruises = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/cruises/po');
+        const response = await fetch('http://127.0.0.1:5000/cruises/princess');
         const data = await response.json();
 
-        // Filter to only distinct cruises by cruise_code
         const uniqueCruises = [];
         const seenCodes = new Set();
         data.forEach(c => {
@@ -27,16 +24,16 @@ function CruiseList() {
       } catch (error) {
         console.error('Error fetching cruises:', error);
       }
-    }
-  };
+    };
+
+    fetchCruises();
+  }, []); // runs once when the tab (component) is rendered
 
   return (
     <div>
-      <button className="show-button" onClick={handleClick}>
-        {showCruises ? 'Hide Currently Tracked Cruises' : 'Show Currently Tracked Cruises'}
-      </button>
-
-      {showCruises && cruises.length > 0 && (
+      {cruises.length === 0 ? (
+        <p>Loading Princess Cruises...</p>
+      ) : (
         <table className="cruise-table">
           <thead>
             <tr>
@@ -66,4 +63,4 @@ function CruiseList() {
   );
 }
 
-export default CruiseList;
+export default PrincessCruisesTable;

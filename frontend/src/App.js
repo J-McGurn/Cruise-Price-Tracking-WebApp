@@ -1,14 +1,19 @@
 import React from 'react';
-import CruiseList from './CruiseList';
 import PriceGraph from './PriceGraph';
+import CruiseTabs from './CruiseTabs';
+import Navbar from './Navbar';
 import './App.css';
 
 function App() {
+
+  const handleNavbarButtonClick = () => {
+    alert('Navbar button clicked!');
+  };
   return (
     <>
+      <Navbar onButtonClick={handleNavbarButtonClick} />
       <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-        <h1>Cruise Tracking App</h1>
-        <CruiseList />
+        <CruiseTabs />
       </div>
 
       <div style={{ padding: '20px', fontFamily: 'Arial' }}>
