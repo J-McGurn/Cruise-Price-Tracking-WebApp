@@ -10,8 +10,8 @@ This web application allows users to track the prices of different cruises (that
 - Add and remove cruises from the graph dynamically to compare
 
 ## How the Data is Collected
-- The app fetches cruise pricing and cabin information for selected P&O Cruises using a Python script (`price_tracker.py`).  
-- The script requests data from P&O's public API endpoints for a set of predefined cruise codes and cabin types.  
+- The app fetches cruise pricing and cabin information for selected Cruises using Python scripts (`[cruise company]_price_tracker.py`).  
+- The script requests data from the cruise's public API endpoints for a set of predefined cruise codes and cabin types.  
 - Data includes:
   - Cruise name and ship
   - Departure port and date
@@ -71,6 +71,6 @@ Open your browser and go to: http://localhost:3000/ to view the Web App
 ## Disclaimer
 - Data is provided for informational purposes only.
 - This project is provided for **educational and personal use only**.
-- This app currently only tracks **P&O Cruises** for personal reasons.    
-- This project is **not affiliated with or endorsed** by P&O Cruises or any other cruise company.  
-- Users should **always check the official P&O Cruises website** before making any booking or travel decisions.
+- This app currently only tracks **P&O Cruises** and **Princess Cruises** for personal reasons.    
+- This project is **not affiliated with or endorsed** by P&O Cruises, Princess Cruises or any other cruise company.  
+- Users should **always check the official Cruise website** before making any booking or travel decisions.
