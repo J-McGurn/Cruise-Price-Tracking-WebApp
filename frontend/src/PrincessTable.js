@@ -8,7 +8,7 @@ function PrincessCruisesTable() {
   useEffect(() => {
     const fetchCruises = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/cruises/princess');
+        const response = await fetch('https://cruise-price-tracking-webapp.onrender.com/cruises/princess');
         const data = await response.json();
 
         const uniqueCruises = [];

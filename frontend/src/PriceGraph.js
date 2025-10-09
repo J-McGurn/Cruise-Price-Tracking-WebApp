@@ -10,8 +10,8 @@ function PriceGraph() {
   // Fetch both cruise datasets
   useEffect(() => {
     Promise.all([
-      fetch('http://127.0.0.1:5000/cruises/po').then(res => res.json()),
-      fetch('http://127.0.0.1:5000/cruises/princess').then(res => res.json())
+      fetch('https://cruise-price-tracking-webapp.onrender.com/cruises/po').then(res => res.json()),
+      fetch('https://cruise-price-tracking-webapp.onrender.com/cruises/princess').then(res => res.json())
     ])
       .then(([poData, princessData]) => {
         setPoCruises(poData);

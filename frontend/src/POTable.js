@@ -7,7 +7,7 @@ function POCruisesTable() {
   useEffect(() => {
     const fetchCruises = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/cruises/po');
+        const response = await fetch('https://cruise-price-tracking-webapp.onrender.com/cruises/po');
         const data = await response.json();
 
         // ✅ Filter to only unique cruise_code entries
