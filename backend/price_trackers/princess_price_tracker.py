@@ -216,8 +216,13 @@ def main():
                     if not guest1:
                         continue
                     
-                    price = guest1.get("fare")
-                    obc_usd = guest1.get("obc", 0)
+                    # find guest 2
+                    guest2 = next((g for g in category.get("guests", []) if g.get("id") == 2), None)
+                    if not guest2:
+                        continue
+                    
+                    price = guest1.get("fare") + guest2.get("fare")
+                    obc_usd = guest1.get("obc", 0) + guest2.get("obc", 0)
                     obc = round(obc_usd * USD_TO_GBP, 2) if obc_usd else 0 # convert to GBP
                     
                     
