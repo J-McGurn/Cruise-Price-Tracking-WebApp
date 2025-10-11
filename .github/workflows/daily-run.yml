@@ -26,9 +26,11 @@ jobs:
           fi
 
       - name: Run Python script
-        run: python server.py
+        working-directory: backend/price_trackers
+        run: python master.py
 
       - name: Commit updated SQLite DB
+        working-directory: backend
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
