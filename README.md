@@ -21,7 +21,6 @@ This web application allows users to track the prices of different cruises (that
 
 - The script inserts this data into a local SQLite database (`cruises.db`).  
 - **Updates Schedule:** TUpdates Schedule: The script is automatically executed via **GitHub Actions** **every day** at **9:00 AM UK** time.  
-- **Important:** The repository itself does **not include the latest database updates**. Users cloning the repo will only get the current version of `cruises.db` at the time of latest commit.
 
 ## Screenshots
 ### Main Dashboard
