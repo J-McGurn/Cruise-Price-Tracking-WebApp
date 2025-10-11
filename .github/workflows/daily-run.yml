@@ -26,7 +26,7 @@ jobs:
           fi
 
       - name: Run Python script
-        working-directory: backend/price_trackers
+        working-directory: backend
         run: python master.py
 
       - name: Commit updated SQLite DB
