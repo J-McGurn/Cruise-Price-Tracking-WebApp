@@ -41,3 +41,8 @@ jobs:
           git add all_cruises.db
           git commit -m "Update SQLite database [skip ci]" || echo "No changes to commit"
           git push
+
+      - name: Trigger Render redeploy
+        run: |
+          echo "🚀 Triggering Render redeploy..."
+          curl -X GET "${{ secrets.RENDER_DEPLOY_HOOK }}"
