@@ -20,7 +20,7 @@ This web application allows users to track the prices of different cruises (that
   - Pricing for different fare types, onboard credits, and drinks packages  
 
 - The script inserts this data into a local SQLite database (`cruises.db`).  
-- **Updates Schedule:** TUpdates Schedule: The script is automatically executed via **GitHub Actions** **every day** at **9:00 AM UK** time.  
+- **Updates Schedule:** The script is automatically executed via **GitHub Actions** **every day** at **9:00 AM UK** time.  
 
 ## Screenshots
 ### Main Dashboard
