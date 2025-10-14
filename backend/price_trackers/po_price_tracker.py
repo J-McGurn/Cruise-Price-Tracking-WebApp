@@ -1,41 +1,22 @@
 import os
+import json
 import requests
 import sqlite3
 from datetime import datetime, date
+from pathlib import Path
 
 def main():
     # === CONFIG ===
-    cruise_codes = [
-        "A542B", "A644A", "A644B", "G614", "B615",
-        "K614", "N614", "A625", "A626", "K619"
-    ]
-
-    cabin_ids = {
-        "Inside": "I_I",
-        "Outside": "O_O",
-        "Balcony": "B_B"
-    }
-
-    dictionary = {
-        "N614": "Spain and Portugal",
-        "A542B": "Canary Islands And Madeira Fly-Cruise",
-        "A644A": "Canary Islands And Madeira Fly-Cruise",
-        "A644B": "Canary Islands And Madeira Fly-Cruise",
-        "G614": "Norwegian Fjords",
-        "B615": "Norwegian Fjords",
-        "K614": "Mediterranean - Spain And France",
-        "A625": "Western Mediterranean Fly-Cruise",
-        "A626": "Eastern Mediterranean Fly-Cruise",
-        "K619": "Mediterranean - Spain And France",
-        "VE": "Ventura",
-        "AZ": "Azura",
-        "IA": "Iona",
-        "BR": "Britannia",
-        "AR": "Arvia",
-        "SOU": "Southampton",
-        "TCI": "Tenerife",
-        "MLA": "Malta"
-    }
+    config_path = Path(__file__).resolve().parents[1] / "config" / "po_config.json"
+    
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+        
+    cruise_codes = config.get("cruise_codes", [])
+    cabins = config.get("cabins", {})
+    routes = config.get("routes", {})
+    ships = config.get("ships", {})
+    ports = config.get("ports", {})
 
     today = date.today().isoformat()
 
@@ -105,7 +86,7 @@ def main():
 
         # === PARSE RESPONSE ===
         data = response.json().get('data', {})
-        cruise_name = dictionary.get(cruise_code, cruise_code)
+        cruise_name = routes.get(cruise_code, cruise_code)
         departure_date = data.get('sailingDate', 'N/A')
         try:
             departure_date = datetime.strptime(departure_date, "%Y-%m-%d").strftime("%d/%m/%Y")
@@ -113,15 +94,15 @@ def main():
             departure_date = departure_date  # fallback if API changes format
         duration = data.get('duration', 'N/A')
         ship_code = data.get('shipCode', 'N/A')
-        ship_name = dictionary.get(ship_code, ship_code)
+        ship_name = ships.get(ship_code, ship_code)
         depart_port = data.get('departPortId', 'N/A')
-        depart_port_name = dictionary.get(depart_port, depart_port)
+        depart_port_name = ports.get(depart_port, depart_port)
         room_types = data.get('roomTypes', [])
 
 
         for room in room_types:
             cabin_type = room.get('name')
-            if cabin_type not in cabin_ids:
+            if cabin_type not in cabins:
                 continue  # skip other cabin types
 
             fares = {
@@ -131,7 +112,7 @@ def main():
             select_package_price = None
 
             for category in room.get('categories', []):
-                if category.get('id') == cabin_ids[cabin_type]:
+                if category.get('id') == cabins[cabin_type]:
                     for price_info in category.get('price', []):
                         fare = price_info.get('fare')
                         price_data = price_info.get('price')

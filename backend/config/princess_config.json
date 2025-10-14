@@ -1,0 +1,48 @@
+{
+    "cruise_codes": [
+        "2522",
+        "B605",
+        "8618",
+        "8620",
+        "Y628",
+        "4639",
+        "G649A",
+        "B704",
+        "N711",
+        "Y716",
+        "Y726",
+        "1732"
+    ],
+
+    "cabins": {
+        "Inside": "IE",
+        "Outside": "OE",
+        "Balcony": "BE"
+    },
+
+    "ships": {
+        "CB": "Caribbean Princess",
+        "CO": "Coral Princess",
+        "KP": "Crown Princess",
+        "DI": "Diamond Princess",
+        "XP": "Discovery Princess",
+        "EP": "Emerald Princess",
+        "EX": "Enchanted Princess",
+        "AP": "Grand Princess",
+        "IP": "Island Princess",
+        "MJ": "Majestic Princess",
+        "GP": "Regal Princess",
+        "RP": "Royal Princess",
+        "RU": "Ruby Princess",
+        "SA": "Sapphire Princess",
+        "YP": "Sky Princess",
+        "ST": "Star Princess",
+        "SP": "Sun Princess"
+    },
+
+    "ports": {
+        "FLL": "Fort Lauderdale",
+        "SOU": "Southampton",
+        "SEA": "Seattle"
+    }
+}

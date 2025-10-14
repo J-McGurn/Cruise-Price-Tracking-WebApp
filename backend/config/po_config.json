@@ -1,0 +1,47 @@
+{
+    "cruise_codes": [
+        "A542B",
+        "A644A",
+        "A644B",
+        "G614",
+        "B615",
+        "K614",
+        "N614",
+        "A625",
+        "A626",
+        "K619"
+    ],
+        
+    "cabins": {
+        "Inside": "I_I",
+        "Outside": "O_O",
+        "Balcony": "B_B"
+    },
+
+    "routes": {
+        "N614": "Spain and Portugal",
+        "A542B": "Canary Islands And Madeira Fly-Cruise",
+        "A644A": "Canary Islands And Madeira Fly-Cruise",
+        "A644B": "Canary Islands And Madeira Fly-Cruise",
+        "G614": "Norwegian Fjords",
+        "B615": "Norwegian Fjords",
+        "K614": "Mediterranean - Spain And France",
+        "A625": "Western Mediterranean Fly-Cruise",
+        "A626": "Eastern Mediterranean Fly-Cruise",
+        "K619": "Mediterranean - Spain And France"
+    },
+
+    "ships": {
+        "VE": "Ventura",
+        "AZ": "Azura",
+        "IA": "Iona",
+        "BR": "Britannia",
+        "AR": "Arvia"
+    },
+
+    "ports": {
+        "SOU": "Southampton",
+        "TCI": "Tenerife",
+        "MLA": "Malta"
+    }
+}

@@ -1,43 +1,21 @@
 import os
+import json
 import sqlite3
 import requests
 from datetime import datetime, date
+from pathlib import Path
 
 def main():
     # === CONFIG ===
-    cruise_codes = [
-        "2522", "B605", "8618", "8620", "Y628", "4639",
-        "G649A", "B704", "N711", "Y716", "Y726", "1732"
-    ]
-
-    cabin_ids = {
-        "Inside": "IE",
-        "Outside": "OE",
-        "Balcony": "BE"
-    }
-
-    dictionary = {
-        "CB": "Caribbean Princess",
-        "CO": "Coral Princess",
-        "KP": "Crown Princess",
-        "DI": "Diamond Princess",
-        "XP": "Discovery Princess",
-        "EP": "Emerald Princess",
-        "EX": "Enchanted Princess",
-        "AP": "Grand Princess",
-        "IP": "Island Princess",
-        "MJ": "Majestic Princess",
-        "GP": "Regal Princess",
-        "RP": "Royal Princess",
-        "RU": "Ruby Princess",
-        "SA": "Sapphire Princess",
-        "YP": "Sky Princess",
-        "ST": "Star Princess",
-        "SP": "Sun Princess",
-        "FLL": "Fort Lauderdale",
-        "SOU": "Southampton",
-        "SEA": "Seattle",
-    }
+    config_path = Path(__file__).resolve().parents[1] / "config" / "princess_config.json"
+    
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+        
+    cruise_codes = config.get("cruise_codes", [])
+    cabins = config.get("cabins", {})
+    ships = config.get("ships", {})
+    ports = config.get("ports", {})
 
     today = date.today().isoformat()
     USD_TO_GBP = 0.78
@@ -184,9 +162,9 @@ def main():
             if not meta_cruise:
                 raise ValueError(f"Cruise with id {cruise_code} not found under product {meta_id}")
             ship_id = meta_cruise["voyage"]["ship"]["id"]
-            ship_name = dictionary.get(ship_id, ship_id)
+            ship_name = ships.get(ship_id, ship_id)
             departure_port_id = meta_cruise["voyage"]["startPortId"]
-            departure_port_name = dictionary.get(departure_port_id, departure_port_id)
+            departure_port_name = ports.get(departure_port_id, departure_port_id)
             departure_date = meta_cruise["voyage"]["sailDate"]
             departure_date = datetime.strptime(departure_date, "%Y%m%d").strftime("%d/%m/%Y")
             duration = meta_cruise["voyage"]["duration"]
@@ -195,7 +173,7 @@ def main():
             cruise = fare_product.get("cruises", [])[0]
             
             # Flip mapping so we can look up cabin names by ID  
-            id_to_name = {v: k for k, v in cabin_ids.items()}
+            id_to_name = {v: k for k, v in cabins.items()}
             
             fares = {
                 "BESTFARE": {},
@@ -234,11 +212,11 @@ def main():
                     }
                     
             # === STEP 3: Insert Into DB ===
-            for fare_type, cabins in fares.items():
-                for cabin_name, data in cabins.items():
+            for fare_type, fare_cabins in fares.items():
+                for cabin_name, data in fare_cabins.items():
                     if not data or not data.get("price"):
                         continue
-
+                     
                     cursor.execute("""
                         INSERT INTO princess_cruises (
                             date_checked, cruise_code, cruise_name, ship_name, departure_port,
@@ -259,6 +237,7 @@ def main():
                         data["obc"],
                         data["net_price"]
                     ))
+
 
     conn.commit()
     conn.close()
