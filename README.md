@@ -1,8 +1,8 @@
 # Cruise Price Tracking Web App
-Tracks cruise prices over time and visualises them on a graph.
+A web app for visualizing and dynamically tracking cruise prices across multiple cruise lines for real-time comparison and insights.
 
 ## Description
-This web application allows users to track the prices of different cruises (that have been pre-selected by myself), view them in a table, and see historical price trends on an interactive graph. It's built with a React frontend and a Python/Flask backend.
+A web application that allows users to track prices of pre-selected cruises, view them in a dynamic table, and explore historical trends through interactive graphs. Built with a React frontend and a Python/Flask backend.
 
 ## Features
 - View currently tracked cruises in a table
