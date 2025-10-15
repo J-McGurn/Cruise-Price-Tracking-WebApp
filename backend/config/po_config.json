@@ -9,7 +9,12 @@
         "N614",
         "A625",
         "A626",
-        "K619"
+        "K619",
+        "N709",
+        "G712",
+        "R708",
+        "K714",
+        "N724"
     ],
         
     "cabins": {
@@ -28,7 +33,12 @@
         "K614": "Mediterranean - Spain And France",
         "A625": "Western Mediterranean Fly-Cruise",
         "A626": "Eastern Mediterranean Fly-Cruise",
-        "K619": "Mediterranean - Spain And France"
+        "K619": "Mediterranean - Spain And France",
+        "N709": "Spain And Portugal",
+        "G712": "Norwegian Fjords",
+        "R708": "Morocco And Cape Verde Discovery",
+        "K714": "Mediterranean - Spain And France",
+        "N724": "Spain Madeira and Canary Islands"
     },
 
     "ships": {
@@ -36,7 +46,8 @@
         "AZ": "Azura",
         "IA": "Iona",
         "BR": "Britannia",
-        "AR": "Arvia"
+        "AR": "Arvia",
+        "AU": "Aurora"
     },
 
     "ports": {
