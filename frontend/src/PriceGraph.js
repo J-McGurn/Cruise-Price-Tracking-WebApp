@@ -187,7 +187,14 @@ function PriceGraph() {
             <XAxis dataKey="date">
               <Label value="Date Checked" offset={-10} position="insideBottom" />
             </XAxis>
-            <YAxis domain={['dataMin - 50', 'dataMax + 50']}>
+            <YAxis
+              domain={['auto', 'auto']}
+              tickFormatter={(value) => {
+                const num = Number(value);
+                if (isNaN(num)) return ''; // ignore bad values
+                return `£${Math.round(num).toLocaleString()}`;
+              }}
+            >
               <Label
                 value="Total Price (£)"
                 angle={-90}
@@ -195,7 +202,13 @@ function PriceGraph() {
                 style={{ textAnchor: 'middle' }}
               />
             </YAxis>
-            <Tooltip />
+            <Tooltip
+              formatter={(value) => {
+                const num = Number(value);
+                if (isNaN(num)) return '—';
+                return `£${Math.round(num).toLocaleString()}`;
+              }}
+            />
             {chartDataSets.map((_, idx) => (
               <Line
                 key={idx}
