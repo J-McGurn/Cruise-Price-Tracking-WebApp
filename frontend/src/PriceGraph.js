@@ -28,6 +28,7 @@ function PriceGraph() {
       updated[index].cruise_code = '';
       updated[index].cabin_type = '';
       updated[index].fare_type = '';
+      updated[index].include_drinks = false;
     } else if (field === 'cruise_code') {
       updated[index].cabin_type = '';
       updated[index].fare_type = '';
@@ -41,7 +42,7 @@ function PriceGraph() {
   const addCruiseSelection = () => {
     setSelectedCruises([
       ...selectedCruises,
-      { cruiseLine: '', cruise_code: '', cabin_type: '', fare_type: '' }
+      { cruiseLine: '', cruise_code: '', cabin_type: '', fare_type: '', includeDrinks: false }
     ]);
   };
 
@@ -71,7 +72,12 @@ function PriceGraph() {
         c.cabin_type === sel.cabin_type &&
         c.fare_type === sel.fare_type
       )
-      .map(c => ({ date: c.date_checked, total_price: c.total_price }));
+      .map(c => {
+        const base = Number(c.total_price) || 0;
+        const drinks = Number(c.drinks_price) || 0;
+        const total = (sel.includeDrinks && sel.cruiseLine === 'po') ? base + drinks : base;
+        return { date: c.date_checked, total_price: total };
+      });
     data.sort((a, b) => new Date(a.date) - new Date(b.date));
     return data;
   }).filter(ds => ds.length > 0);
@@ -154,6 +160,21 @@ function PriceGraph() {
                 <option key={f} value={f}>{f}</option>
               ))}
             </select>
+
+            {sel.cruiseLine === 'po' && (
+              <label className="include-drinks" style={{ marginLeft: '10px' }}>
+                <input
+                  type="checkbox"
+                  checked={!!sel.includeDrinks}
+                  onChange={(e) => {
+                    const updated = [...selectedCruises];
+                    updated[idx] = { ...updated[idx], includeDrinks: e.target.checked };
+                    setSelectedCruises(updated);
+                  }}
+                />
+                Include Drinks Package
+              </label>
+            )}
 
             {selectedCruises.length > 0 && (
               <button className="remove-btn" onClick={() => removeCruiseSelection(idx)}>
