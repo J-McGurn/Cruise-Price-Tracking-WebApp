@@ -6,11 +6,19 @@ from datetime import datetime, date
 from pathlib import Path
 
 def main():
+    # === TEST MODE ===
+    TEST_MODE = False  # 👈 Set to False for real run
+    print(f"Running in {'TEST' if TEST_MODE else 'LIVE'} mode")
+    
     # === CONFIG ===
     config_path = Path(__file__).resolve().parents[1] / "config" / "po_config.json"
+    removed_path = Path(__file__).resolve().parents[1] / "config" / "removed_cruises.json"
     
     with open(config_path, 'r') as f:
         config = json.load(f)
+        
+    with open(removed_path, 'r') as f:
+        removed = json.load(f)
         
     cruise_codes = config.get("cruise_codes", [])
     cabins = config.get("cabins", {})
@@ -18,38 +26,29 @@ def main():
     ships = config.get("ships", {})
     ports = config.get("ports", {})
 
-    today = date.today().isoformat()
+    today = date.today()
 
     # === HEADERS/COOKIES ===
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0",
         "Accept": "application/json",
-        "Accept-Language": "en-GB,en;q=0.5",
-        "Accept-Encoding": "gzip, deflate, br, zstd",
         "Referer": "https://www.pocruises.com/",
         "brand": "po",
         "locale": "en_GB",
         "country": "GB",
         "currencyCode": "GBP",
-        "Content-Type": "application/json",
-        "Connection": "keep-alive",
-        "Sec-Fetch-Dest": "empty",
-        "Sec-Fetch-Mode": "cors",
-        "Sec-Fetch-Site": "same-origin",
-        "Priority": "u=0",
-        "TE": "trailers",
-        "x-dtpc": "2$500274100_5h10vEFMASNKKVCIALBDVRNTKHNIUUUADGGHI-0e0"}
-
-    cookies = {
-        "countryCode": "GB",
-        "currencyCode": "GBP",
+        "Content-Type": "application/json"
     }
+    cookies = {"countryCode": "GB", "currencyCode": "GBP"}
 
     # === DATABASE SETUP ===
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    db_path = os.path.join(ROOT_DIR, "all_cruises.db")
-    conn = sqlite3.connect(db_path)
+    if TEST_MODE:
+        conn = sqlite3.connect(":memory:")  # In-memory DB for testing
+        print("⚙️ Using in-memory database (no data will persist)")
+    else:
+        ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        db_path = os.path.join(ROOT_DIR, "all_cruises.db")
+        conn = sqlite3.connect(db_path)
 
     cursor = conn.cursor()
     cursor.execute("""
@@ -74,42 +73,66 @@ def main():
     conn.commit()
 
     # === LOOP THROUGH CRUISES ===
-    for cruise_code in cruise_codes:
+    for cruise_code in cruise_codes[:]:  # copy list to safely modify
         url = f"https://www.pocruises.com/api/v2/price/cruise/{cruise_code}?noOfGuests/adults=2&noOfGuests/childs=0&noOfGuests/infants=0"
         print(f"Fetching {cruise_code}...")
 
-        response = requests.get(url, headers=headers, cookies=cookies)
-
-        if response.status_code != 200:
-            print(f"❌ Request failed for {cruise_code}: {response.status_code}")
+        try:
+            response = requests.get(url, headers=headers, cookies=cookies, timeout=50)
+            response.raise_for_status()
+        except Exception as e:
+            print(f"❌ Request error for {cruise_code}: {e}")
             continue
 
-        # === PARSE RESPONSE ===
-        data = response.json().get('data', {})
-        cruise_name = routes.get(cruise_code, cruise_code)
-        departure_date = data.get('sailingDate', 'N/A')
         try:
-            departure_date = datetime.strptime(departure_date, "%Y-%m-%d").strftime("%d/%m/%Y")
-        except:
-            departure_date = departure_date  # fallback if API changes format
+            data = response.json().get('data', {}) or {}
+        except Exception as e:
+            print(f"❌ JSON parse error for {cruise_code}: {e}")
+            continue
+        
+        cruise_name = routes.get(cruise_code, cruise_code)
+        dep_date_str = data.get('sailingDate')
+        try:
+            dep_date_obj = datetime.strptime(dep_date_str, "%Y-%m-%d").date()
+            dep_date_formatted = dep_date_obj.strftime("%d/%m/%y")
+        except Exception:
+            dep_date_obj = None
+            dep_date_formatted = dep_date_str or "N/A"
+        
+        # === CHECK IF DEPARTED ===
+        if dep_date_obj and dep_date_obj <= today:
+            print(f"🛳️ {cruise_code} ({cruise_name}) has already departed — removing from tracking.")
+            cruise_codes.remove(cruise_code)
+            del config["routes"][cruise_code]
+            removed.append({
+                "timestamp": datetime.now().isoformat(),
+                "brand": "po",
+                "cruise_code": cruise_code,
+                "cruise_name": cruise_name,
+                "reason": "departed"
+            })
+            continue
+            
         duration = data.get('duration', 'N/A')
         ship_code = data.get('shipCode', 'N/A')
         ship_name = ships.get(ship_code, ship_code)
         depart_port = data.get('departPortId', 'N/A')
         depart_port_name = ports.get(depart_port, depart_port)
         room_types = data.get('roomTypes', [])
-
+        
+        has_any_available = False
 
         for room in room_types:
             cabin_type = room.get('name')
             if cabin_type not in cabins:
-                continue  # skip other cabin types
+                continue  # skip non-tracked cabin types
 
             fares = {
                 "Saver": {"price": None, "fixed_obc": 0, "bonus_obc": 0, "net_price": None},
                 "Select": {"price": None, "fixed_obc": 0, "bonus_obc": 0, "net_price": None},
             }
             select_package_price = None
+            room_has_price = False
 
             for category in room.get('categories', []):
                 if category.get('id') == cabins[cabin_type]:
@@ -117,12 +140,15 @@ def main():
                         fare = price_info.get('fare')
                         price_data = price_info.get('price')
                         price_val = price_data.get('parsedValue') if isinstance(price_data, dict) else price_data
+                        if not price_val or price_val == 0:
+                            continue
 
-                        if fare == "KU2" or fare == "FU2":
+                        room_has_price = True  # ✅ at least one available cabin
+
+                        if fare in ["KU2", "FU2"]:
                             fares["Saver"]["price"] = price_val
                         elif fare == "KD1":
                             fares["Select"]["price"] = price_val
-
                             obc_data = price_info.get('onBoardCredits') or price_info.get('onBoardCredit')
                             if isinstance(obc_data, dict):
                                 fares["Select"]["bonus_obc"] = obc_data.get('amount', 0)
@@ -130,28 +156,33 @@ def main():
                                 fares["Select"]["bonus_obc"] = obc_data[0].get('amount', 0)
 
                             # Perks
-                            perks_data = price_info.get("perks", [])
-                            for perk in perks_data:
+                            for perk in price_info.get("perks", []):
                                 if perk.get("rateCode") == "KD1":
                                     perk_obc = perk.get("onBoardCredit")
                                     if isinstance(perk_obc, dict):
                                         fares["Select"]["fixed_obc"] = perk_obc.get("parsedValue", 0)
                                     elif isinstance(perk_obc, (int, float)):                                        
                                         fares["Select"]["fixed_obc"] = perk_obc
-                        elif fare == "K8W" or fare == "K2S":
+                        elif fare in ["K8W", "K2S"]:
                             select_package_price = price_val
 
-            # Net price and drinks
+            if not room_has_price:
+                print(f"❌ {cruise_code} - {cabin_type} sold out (skipping).")
+                continue
+
+            has_any_available = True
+
+            # Calculate final prices
             if fares["Select"]["price"] is not None:
                 fares["Select"]["net_price"] = (
                     fares["Select"]["price"] - fares["Select"]["bonus_obc"] - fares["Select"]["fixed_obc"]
                 )
 
             drinks_price = None
-            if fares["Select"]["price"] is not None and select_package_price is not None:
+            if fares["Select"]["price"] and select_package_price:
                 drinks_price = select_package_price - fares["Select"]["price"]
 
-            # Insert both fares into DB
+            # Insert both fares
             for fare_type, fare_data in fares.items():
                 if fare_data["price"] is None:
                     continue
@@ -162,12 +193,12 @@ def main():
                     fixed_obc, bonus_obc, total_price, drinks_price
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
-                    today,
+                    today.isoformat(),
                     cruise_code,
                     cruise_name,
                     ship_name,
                     depart_port_name,
-                    departure_date,
+                    dep_date_formatted,
                     duration,
                     cabin_type,
                     fare_type,
@@ -177,8 +208,32 @@ def main():
                     fare_data["net_price"] if fare_type == "Select" else fare_data["price"],
                     drinks_price
                 ))
+
+        # === If all sold out ===
+        if not has_any_available:
+            print(f"🛑 All tracked cabins sold out for {cruise_code} ({cruise_name}) — removing from config.")
+            cruise_codes.remove(cruise_code)
+            del config["routes"][cruise_code]
+            removed.append({
+                "timestamp": datetime.now().isoformat(),
+                "brand": "po",
+                "cruise_code": cruise_code,
+                "cruise_name": cruise_name,
+                "reason": "sold_out"
+            })
+            
+    # === SAVE UPDATED CONFIG ===
+    if not TEST_MODE:
+        config["cruise_codes"] = cruise_codes
+        with open(config_path, 'w') as f:
+            json.dump(config, f, indent=4)
+
+        with open(removed_path, 'w') as f:
+            json.dump(removed, f, indent=4)        
+
     conn.commit()
     conn.close()
-    
+    print("\n✅ Done! Config and database updated successfully.")
+
 if __name__ == "__main__":
     main()
