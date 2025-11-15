@@ -11,7 +11,15 @@
         "N711",
         "Y716",
         "Y726",
-        "1732"
+        "1732",
+        "Y632",
+        "N640",
+        "N735",
+        "N734A",
+        "N639A",
+        "Y730",
+        "U643",
+        "U742"
     ],
 
     "cabins": {
@@ -43,6 +51,8 @@
     "ports": {
         "FLL": "Fort Lauderdale",
         "SOU": "Southampton",
-        "SEA": "Seattle"
+        "SEA": "Seattle",
+        "ROM": "Rome",
+        "BCN": "Barcelona"
     }
 }
