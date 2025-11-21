@@ -31,15 +31,24 @@ def main():
     # === HEADERS/COOKIES ===
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0",
-        "Accept": "application/json",
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Language": "en-GB,en;q=0.9",
         "Referer": "https://www.pocruises.com/",
+        "Origin": "https://www.pocruises.com",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
         "brand": "po",
         "locale": "en_GB",
         "country": "GB",
-        "currencyCode": "GBP",
-        "Content-Type": "application/json"
+        "currencyCode": "GBP"
     }
-    cookies = {"countryCode": "GB", "currencyCode": "GBP"}
+    cookies = {
+        "countryCode": "GB",
+        "currencyCode": "GBP",
+        "OptanonConsent": "isIABGlobal=false&datestamp=2025-01-01T00:00:00&version=6.20.0",
+        "OptanonAlertBoxClosed": "2025-01-01T00:00:00.000Z"
+    }
 
     # === DATABASE SETUP ===
     if TEST_MODE:
