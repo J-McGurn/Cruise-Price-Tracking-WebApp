@@ -74,11 +74,22 @@ def main():
 
     # === LOOP THROUGH CRUISES ===
     for cruise_code in cruise_codes[:]:  # copy list to safely modify
-        url = f"https://www.pocruises.com/api/v2/price/cruise/{cruise_code}?noOfGuests/adults=2&noOfGuests/childs=0&noOfGuests/infants=0"
+        params = {
+            "noOfGuests[adults]": 2,
+            "noOfGuests[childs]": 0,
+            "noOfGuests[infants]": 0,
+        }
+        url = f"https://www.pocruises.com/api/v2/price/cruise/{cruise_code}"
         print(f"Fetching {cruise_code}...")
 
         try:
-            response = requests.get(url, headers=headers, cookies=cookies, timeout=50)
+            response = requests.get(
+                url,
+                headers=headers,
+                cookies=cookies,
+                params=params,
+                timeout=50
+            )
             response.raise_for_status()
         except Exception as e:
             print(f"❌ Request error for {cruise_code}: {e}")
