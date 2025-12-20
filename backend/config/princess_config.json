@@ -1,6 +1,5 @@
 {
     "cruise_codes": [
-        "2522",
         "B605",
         "8618",
         "8620",
@@ -21,13 +20,11 @@
         "U643",
         "U742"
     ],
-
     "cabins": {
         "Inside": "IE",
         "Outside": "OE",
         "Balcony": "BE"
     },
-
     "ships": {
         "CB": "Caribbean Princess",
         "CO": "Coral Princess",
@@ -47,7 +44,6 @@
         "ST": "Star Princess",
         "SU": "Sun Princess"
     },
-
     "ports": {
         "FLL": "Fort Lauderdale",
         "SOU": "Southampton",

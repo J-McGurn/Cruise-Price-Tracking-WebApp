@@ -7,14 +7,18 @@ from pathlib import Path
 
 def main():
     # === TEST MODE ===
-    TEST_MODE = True  # 👈 Set to False for real run
+    TEST_MODE = False  # 👈 Set to False for real run
     print(f"Running in {'TEST' if TEST_MODE else 'LIVE'} mode")
     
     # === CONFIG ===
     config_path = Path(__file__).resolve().parents[1] / "config" / "princess_config.json"
+    removed_path = Path(__file__).resolve().parents[1] / "config" / "removed_cruises.json"
     
     with open(config_path, 'r') as f:
         config = json.load(f)
+        
+    with open(removed_path, 'r') as f:
+        removed = json.load(f)
         
     cruise_codes = config.get("cruise_codes", [])
     cabins = config.get("cabins", {})
@@ -147,7 +151,8 @@ def main():
         
         fare_products = fares_data.get("products", [])
         if not fare_products:
-            print(f"No products found for cruise code {cruise_code}")
+            print(f"No products found for cruise code {cruise_code} - removing from tracking")
+            remove_cruise(cruise_code, "Unknown", config, removed, "No products found in Metadata")
             continue
         else:
             fare_product = fare_products[0]
@@ -159,7 +164,8 @@ def main():
                 None
             )
             if not meta_product:
-                print(f"Product with id {meta_id} not found") 
+                print(f"Product with id {meta_id} not found - removing from tracking")
+                remove_cruise(cruise_code, "Unknown", config, removed, "No matching product in Metadata")
                 continue
             
             cruise_name = meta_product.get("name")
@@ -169,6 +175,7 @@ def main():
             )
             if not meta_cruise:
                 print(f"Cruise with id {cruise_code} not found under product {meta_id}")
+                remove_cruise(cruise_code, cruise_name, config, removed, "No matching cruise in Metadata")
                 continue
             ship_id = meta_cruise["voyage"]["ship"]["id"]
             ship_name = ships.get(ship_id, ship_id)
@@ -217,7 +224,7 @@ def main():
                     fares[faretype][cabin_name] = {
                         "price": price,
                         "obc": obc,
-                        "net_price": price - obc  # adjust later if needed
+                        "net_price": price - obc 
                     }
                     
             # === STEP 3: Insert Into DB ===
@@ -259,6 +266,18 @@ def main():
     conn.commit()
     conn.close()
     print("\n✅ Done! Config and database updated successfully.")
+    
+def remove_cruise(cruise_code, cruise_name, config, removed, reason):
+    cruise_codes = config.get("cruise_codes", [])
+    if cruise_code in cruise_codes:
+        cruise_codes.remove(cruise_code)
+        removed.append({
+            "timestamp": datetime.now().isoformat(),
+            "brand": "princess",
+            "cruise_code": cruise_code,
+            "cruise_name": cruise_name,
+            "reason": reason
+        })
     
 if __name__ == "__main__":
     main()

@@ -5,5 +5,12 @@
         "cruise_code": "A542B",
         "cruise_name": "Canary Islands And Madeira Fly-Cruise",
         "reason": "sold_out"
+    },
+    {
+        "timestamp": "2025-12-20T21:08:24.522677",
+        "brand": "princess",
+        "cruise_code": "2522",
+        "cruise_name": "Unknown",
+        "reason": "No products found in Metadata"
     }
 ]
