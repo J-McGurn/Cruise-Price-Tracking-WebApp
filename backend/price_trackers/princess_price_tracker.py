@@ -88,7 +88,7 @@ def main():
 
 
     # === STEP 2: Loop through fares API ===
-    for cruise_code in cruise_codes:    
+    for cruise_code in cruise_codes:
         url_fares = f"https://gw.api.princess.com/pcl-web/internal/caps/pc/pricing/v1/cruises/{cruise_code}"
         payload = {
             "booking": {
@@ -141,7 +141,8 @@ def main():
         
         fare_products = fares_data.get("products", [])
         if not fare_products:
-            raise ValueError(f"No products found for cruise code {cruise_code}")
+            print(f"No products found for cruise code {cruise_code}")
+            continue
         else:
             fare_product = fare_products[0]
             meta_id = fare_product["id"]
@@ -152,7 +153,8 @@ def main():
                 None
             )
             if not meta_product:
-                raise ValueError(f"Product with id {meta_id} not found") 
+                print(f"Product with id {meta_id} not found") 
+                continue
             
             cruise_name = meta_product.get("name")
             meta_cruise = next(
@@ -160,7 +162,8 @@ def main():
                 None
             )
             if not meta_cruise:
-                raise ValueError(f"Cruise with id {cruise_code} not found under product {meta_id}")
+                print(f"Cruise with id {cruise_code} not found under product {meta_id}")
+                continue
             ship_id = meta_cruise["voyage"]["ship"]["id"]
             ship_name = ships.get(ship_id, ship_id)
             departure_port_id = meta_cruise["voyage"]["startPortId"]
