@@ -6,6 +6,10 @@ from datetime import datetime, date
 from pathlib import Path
 
 def main():
+    # === TEST MODE ===
+    TEST_MODE = True  # 👈 Set to False for real run
+    print(f"Running in {'TEST' if TEST_MODE else 'LIVE'} mode")
+    
     # === CONFIG ===
     config_path = Path(__file__).resolve().parents[1] / "config" / "princess_config.json"
     
@@ -37,7 +41,6 @@ def main():
         "Sec-Fetch-Dest": "empty",
         "Sec-Fetch-Mode": "cors",
         "Sec-Fetch-Site": "same-site",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0"
     }
 
     cookies = {
@@ -46,10 +49,13 @@ def main():
     }
 
     # === DATABASE SETUP ===
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    db_path = os.path.join(ROOT_DIR, "all_cruises.db")
-    conn = sqlite3.connect(db_path)
+    if TEST_MODE:
+        conn = sqlite3.connect(":memory:")  # In-memory DB for testing
+        print("⚙️ Using in-memory database (no data will persist)")
+    else:
+        ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        db_path = os.path.join(ROOT_DIR, "all_cruises.db")
+        conn = sqlite3.connect(db_path)
 
     cursor = conn.cursor()
     cursor.execute("""
@@ -241,9 +247,18 @@ def main():
                         data["net_price"]
                     ))
 
+    # === SAVE UPDATED CONFIG ===
+    if not TEST_MODE:
+        config["cruise_codes"] = cruise_codes
+        with open(config_path, 'w') as f:
+            json.dump(config, f, indent=4)
+
+        with open(removed_path, 'w') as f:
+            json.dump(removed, f, indent=4)
 
     conn.commit()
     conn.close()
+    print("\n✅ Done! Config and database updated successfully.")
     
 if __name__ == "__main__":
     main()
