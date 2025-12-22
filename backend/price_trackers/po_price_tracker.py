@@ -178,7 +178,7 @@ def main():
                                         fares["Select"]["fixed_obc"] = perk_obc.get("parsedValue", 0)
                                     elif isinstance(perk_obc, (int, float)):                                        
                                         fares["Select"]["fixed_obc"] = perk_obc
-                        elif fare in ["K8W", "K2S"]:
+                        elif fare in ["K8W", "K2S", "KT1"]:
                             select_package_price = price_val
 
             if not room_has_price:
