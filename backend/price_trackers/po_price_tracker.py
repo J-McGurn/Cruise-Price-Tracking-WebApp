@@ -83,7 +83,7 @@ def main():
             "noOfGuests[childs]": 0,
             "noOfGuests[infants]": 0,
         }
-        url = f"https://www.pocruises.com/api/v2/price/cruise/{cruise_code}"
+        url = f"https://www.pocruises.com/api/v2/price/cruise/{cruise_code}?noOfGuests/adults=2&noOfGuests/childs=0&noOfGuests/infants=0"
         print(f"Fetching {cruise_code}...")
 
         try:
