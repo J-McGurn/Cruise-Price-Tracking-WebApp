@@ -18,7 +18,13 @@
         "N639A",
         "Y730",
         "U643",
-        "U742"
+        "U742",
+        "Y727",
+        "2704",
+        "2803",
+        "B728",
+        "B806",
+        "B810"
     ],
     "cabins": {
         "Inside": "IE",
@@ -49,6 +55,7 @@
         "SOU": "Southampton",
         "SEA": "Seattle",
         "ROM": "Rome",
-        "BCN": "Barcelona"
+        "BCN": "Barcelona",
+        "LAX": "Los Angeles"
     }
 }
