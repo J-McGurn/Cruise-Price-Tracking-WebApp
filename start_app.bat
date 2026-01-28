@@ -5,7 +5,7 @@ echo Starting Cruise Tracking Web App...
 SET BASEDIR=%~dp0
 
 :: Start backend (Flask server)
-start cmd /k "cd /d "%BASEDIR%backend" && python server.py"
+start cmd /k "cd /d "%BASEDIR%backend" && server.py"
 
 :: Start frontend (React app)
 start cmd /k "cd /d "%BASEDIR%frontend" && npm start"

@@ -7,6 +7,27 @@ function PriceGraph() {
   const [princessCruises, setPrincessCruises] = useState([]);
   const [selectedCruises, setSelectedCruises] = useState([]);
 
+  // --- DATE NORMALIZATION ---
+  const normalizeDate = (str) => {
+    if (!str) return str;
+
+    const parts = str.split(/[-/]/).map(Number);
+
+    // If first part > 31, it's already yyyy-mm-dd
+    if (parts[0] > 31) {
+      const [y, m, d] = parts;
+      return `${y.toString().padStart(4, "0")}-${m.toString().padStart(2, "0")}-${d
+        .toString()
+        .padStart(2, "0")}`;
+    }
+
+    // Otherwise assume dd-mm-yyyy
+    const [d, m, y] = parts;
+    return `${y.toString().padStart(4, "0")}-${m.toString().padStart(2, "0")}-${d
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
   // Fetch both cruise datasets
   useEffect(() => {
     Promise.all([
@@ -14,8 +35,9 @@ function PriceGraph() {
       fetch('https://cruise-price-tracking-webapp.onrender.com/cruises/princess').then(res => res.json())
     ])
       .then(([poData, princessData]) => {
-        setPoCruises(poData);
-        setPrincessCruises(princessData);
+        // Normalize dates immediately
+        setPoCruises(poData.map(c => ({ ...c, date_checked: normalizeDate(c.date_checked) })));
+        setPrincessCruises(princessData.map(c => ({ ...c, date_checked: normalizeDate(c.date_checked) })));
       })
       .catch(err => console.error(err));
   }, []);
@@ -54,6 +76,7 @@ function PriceGraph() {
     '#df1212', '#1212df', '#12df12', '#df12df', '#df9e12',
     '#12dfdf', '#df5612', '#5612df', '#12df56', '#df12a6'
   ];
+
   const getColor = idx => colors[idx % colors.length];
 
   const getDataForLine = (line) =>
@@ -64,46 +87,63 @@ function PriceGraph() {
     ...princessCruises.reduce((acc, c) => ({ ...acc, [c.cruise_code]: c.cruise_name }), {})
   };
 
-  const chartDataSets = selectedCruises.map(sel => {
-    if (!sel.cruise_code || !sel.cabin_type || !sel.fare_type) return [];
-    const data = getDataForLine(sel.cruiseLine)
-      .filter(c =>
-        c.cruise_code === sel.cruise_code &&
-        c.cabin_type === sel.cabin_type &&
-        c.fare_type === sel.fare_type
-      )
-      .map(c => {
-        const base = Number(c.total_price) || 0;
-        const drinks = Number(c.drinks_price) || 0;
-        const total = (sel.includeDrinks && sel.cruiseLine === 'po') ? base + drinks : base;
-        return { date: c.date_checked, total_price: total };
-      });
-    data.sort((a, b) => new Date(a.date) - new Date(b.date));
-    return data;
-  }).filter(ds => ds.length > 0);
+  // Build datasets for each selected cruise
+  const chartDataSets = selectedCruises
+    .map(sel => {
+      if (!sel.cruise_code || !sel.cabin_type || !sel.fare_type) return [];
 
+      const data = getDataForLine(sel.cruiseLine)
+        .filter(c =>
+          c.cruise_code === sel.cruise_code &&
+          c.cabin_type === sel.cabin_type &&
+          c.fare_type === sel.fare_type
+        )
+        .map(c => {
+          const base = Number(c.total_price) || 0;
+          const drinks = Number(c.drinks_price) || 0;
+          const total = (sel.includeDrinks && sel.cruiseLine === 'po') ? base + drinks : base;
+
+          return {
+            date: normalizeDate(c.date_checked),
+            total_price: total
+          };
+        });
+
+      // Correct sorting
+      data.sort((a, b) => a.date.localeCompare(b.date));
+
+      return data;
+    })
+    .filter(ds => ds.length > 0);
+
+  // Build merged date list
   const allDates = Array.from(
     new Set([
-      ...poCruises.map(c => c.date_checked),
-      ...princessCruises.map(c => c.date_checked)
+      ...poCruises.map(c => normalizeDate(c.date_checked)),
+      ...princessCruises.map(c => normalizeDate(c.date_checked))
     ])
-  ).sort((a, b) => new Date(a) - new Date(b));
+  ).sort((a, b) => a.localeCompare(b));
 
+  // Merge datasets into one table for Recharts
   const mergedData = allDates.map(date => {
     const row = { date };
+
     chartDataSets.forEach((ds, idx) => {
       const entry = ds.find(d => d.date === date);
       row[`total_price_${idx}`] = entry ? entry.total_price : null;
     });
+
     return row;
   });
 
   const getCruiseOptions = (line) =>
     [...new Set(getDataForLine(line).map(c => c.cruise_code))];
+
   const getCabinOptions = (line, cruise_code) =>
     [...new Set(getDataForLine(line)
       .filter(c => c.cruise_code === cruise_code)
       .map(c => c.cabin_type))];
+
   const getFareOptions = (line, cruise_code, cabin_type) =>
     [...new Set(getDataForLine(line)
       .filter(c => c.cruise_code === cruise_code && c.cabin_type === cabin_type)
@@ -208,11 +248,12 @@ function PriceGraph() {
             <XAxis dataKey="date">
               <Label value="Date Checked" offset={-10} position="insideBottom" />
             </XAxis>
+
             <YAxis
               domain={['auto', 'auto']}
               tickFormatter={(value) => {
                 const num = Number(value);
-                if (isNaN(num)) return ''; // ignore bad values
+                if (isNaN(num)) return '';
                 return `£${Math.round(num).toLocaleString()}`;
               }}
             >
@@ -223,6 +264,7 @@ function PriceGraph() {
                 style={{ textAnchor: 'middle' }}
               />
             </YAxis>
+
             <Tooltip
               formatter={(value) => {
                 const num = Number(value);
@@ -230,6 +272,7 @@ function PriceGraph() {
                 return `£${Math.round(num).toLocaleString()}`;
               }}
             />
+
             {chartDataSets.map((_, idx) => (
               <Line
                 key={idx}
