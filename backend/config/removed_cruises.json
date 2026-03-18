@@ -19,5 +19,89 @@
         "cruise_code": "B605",
         "cruise_name": "Unknown",
         "reason": "No matching product in Metadata"
+    },
+    {
+        "timestamp": "2026-03-18T09:00:13.988715",
+        "brand": "princess",
+        "cruise_code": "8618",
+        "cruise_name": "Unknown",
+        "reason": "No matching product in Metadata"
+    },
+    {
+        "timestamp": "2026-03-18T09:00:14.204606",
+        "brand": "princess",
+        "cruise_code": "Y628",
+        "cruise_name": "Unknown",
+        "reason": "No matching product in Metadata"
+    },
+    {
+        "timestamp": "2026-03-18T09:00:14.405176",
+        "brand": "princess",
+        "cruise_code": "G649A",
+        "cruise_name": "Unknown",
+        "reason": "No matching product in Metadata"
+    },
+    {
+        "timestamp": "2026-03-18T09:00:14.861557",
+        "brand": "princess",
+        "cruise_code": "N711",
+        "cruise_name": "Unknown",
+        "reason": "No matching product in Metadata"
+    },
+    {
+        "timestamp": "2026-03-18T09:00:15.141493",
+        "brand": "princess",
+        "cruise_code": "Y726",
+        "cruise_name": "Unknown",
+        "reason": "No matching product in Metadata"
+    },
+    {
+        "timestamp": "2026-03-18T09:00:15.358624",
+        "brand": "princess",
+        "cruise_code": "Y632",
+        "cruise_name": "Unknown",
+        "reason": "No matching product in Metadata"
+    },
+    {
+        "timestamp": "2026-03-18T09:00:15.598225",
+        "brand": "princess",
+        "cruise_code": "N735",
+        "cruise_name": "Unknown",
+        "reason": "No matching product in Metadata"
+    },
+    {
+        "timestamp": "2026-03-18T09:00:15.784032",
+        "brand": "princess",
+        "cruise_code": "N639A",
+        "cruise_name": "Unknown",
+        "reason": "No matching product in Metadata"
+    },
+    {
+        "timestamp": "2026-03-18T09:00:15.956890",
+        "brand": "princess",
+        "cruise_code": "U643",
+        "cruise_name": "Unknown",
+        "reason": "No matching product in Metadata"
+    },
+    {
+        "timestamp": "2026-03-18T09:00:16.173353",
+        "brand": "princess",
+        "cruise_code": "Y727",
+        "cruise_name": "Unknown",
+        "reason": "No matching product in Metadata"
+    },
+    {
+        "timestamp": "2026-03-18T09:00:16.347231",
+        "brand": "princess",
+        "cruise_code": "2803",
+        "cruise_name": "Unknown",
+        "reason": "No matching product in Metadata"
+    },
+    {
+        "timestamp": "2026-03-18T09:00:16.540137",
+        "brand": "princess",
+        "cruise_code": "B806",
+        "cruise_name": "Unknown",
+        "reason": "No matching product in Metadata"
     }
 ]
