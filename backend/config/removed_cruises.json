@@ -19,5 +19,12 @@
         "cruise_code": "B605",
         "cruise_name": "Unknown",
         "reason": "No matching product in Metadata"
+    },
+    {
+        "timestamp": "2026-04-16T09:27:06.170572",
+        "brand": "princess",
+        "cruise_code": "B810",
+        "cruise_name": "Unknown",
+        "reason": "No products found in Metadata"
     }
 ]
