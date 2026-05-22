@@ -33,5 +33,12 @@
         "cruise_code": "G614",
         "cruise_name": "Norwegian Fjords",
         "reason": "sold_out"
+    },
+    {
+        "timestamp": "2026-05-22T11:11:58.944191",
+        "brand": "princess",
+        "cruise_code": "8618",
+        "cruise_name": "Unknown",
+        "reason": "No matching product in Metadata"
     }
 ]
