@@ -40,5 +40,12 @@
         "cruise_code": "8618",
         "cruise_name": "Unknown",
         "reason": "No matching product in Metadata"
+    },
+    {
+        "timestamp": "2026-06-08T12:39:55.771802",
+        "brand": "po",
+        "cruise_code": "K614",
+        "cruise_name": "Mediterranean - Spain And France",
+        "reason": "sold_out"
     }
 ]
