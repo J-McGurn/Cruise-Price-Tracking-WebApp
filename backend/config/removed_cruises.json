@@ -47,5 +47,19 @@
         "cruise_code": "K614",
         "cruise_name": "Mediterranean - Spain And France",
         "reason": "sold_out"
+    },
+    {
+        "timestamp": "2026-06-15T14:30:16.914040",
+        "brand": "po",
+        "cruise_code": "N614",
+        "cruise_name": "Spain and Portugal",
+        "reason": "sold_out"
+    },
+    {
+        "timestamp": "2026-06-15T14:30:21.184763",
+        "brand": "princess",
+        "cruise_code": "8620",
+        "cruise_name": "Unknown",
+        "reason": "No matching product in Metadata"
     }
 ]

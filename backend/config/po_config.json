@@ -3,7 +3,6 @@
         "A644A",
         "A644B",
         "B615",
-        "N614",
         "A625",
         "A626",
         "K619",
@@ -19,7 +18,6 @@
         "Balcony": "B_B"
     },
     "routes": {
-        "N614": "Spain and Portugal",
         "A644A": "Canary Islands And Madeira Fly-Cruise",
         "A644B": "Canary Islands And Madeira Fly-Cruise",
         "B615": "Norwegian Fjords",
