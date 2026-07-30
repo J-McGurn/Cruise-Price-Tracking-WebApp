@@ -8,7 +8,15 @@
         "G712",
         "R708",
         "K714",
-        "N724"
+        "N724",
+        "K725",
+        "A743",
+        "N729",
+        "A744",
+        "G813",
+        "K815B",
+        "B716",
+        "R812"
     ],
     "cabins": {
         "Inside": "I_I",
@@ -24,7 +32,15 @@
         "G712": "Norwegian Fjords",
         "R708": "Morocco And Cape Verde Discovery",
         "K714": "Mediterranean - Spain And France",
-        "N724": "Spain Madeira and Canary Islands"
+        "N724": "Spain Madeira and Canary Islands",
+        "K725": "Eastern Caribbean Islands Fly-Cruise",
+        "A743": "Canaries Madeira And Morocco Fly-Cruise",
+        "N729": "Spain And Canary Islands",
+        "A744": "Canary Islands And Madeira Fly-Cruise",
+        "G813": "Norwegian Fjords",
+        "K815B": "Norwegian Fjords, 12 Nights",
+        "B716": "Iceland",
+        "R812": "Norway Iceland And North Cape"
     },
     "ships": {
         "VE": "Ventura",
