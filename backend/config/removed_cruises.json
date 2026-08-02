@@ -75,5 +75,26 @@
         "cruise_code": "A625",
         "cruise_name": "Western Mediterranean Fly-Cruise",
         "reason": "sold_out"
+    },
+    {
+        "timestamp": "2026-08-02T13:55:24.853863",
+        "brand": "po",
+        "cruise_code": "A626",
+        "cruise_name": "Eastern Mediterranean Fly-Cruise",
+        "reason": "departed"
+    },
+    {
+        "timestamp": "2026-08-02T13:55:25.334864",
+        "brand": "po",
+        "cruise_code": "K619",
+        "cruise_name": "Mediterranean - Spain And France",
+        "reason": "sold_out"
+    },
+    {
+        "timestamp": "2026-08-02T13:55:30.268857",
+        "brand": "po",
+        "cruise_code": "K815B",
+        "cruise_name": "Norwegian Fjords, 12 Nights",
+        "reason": "sold_out"
     }
 ]

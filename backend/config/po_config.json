@@ -2,8 +2,6 @@
     "cruise_codes": [
         "A644A",
         "A644B",
-        "A626",
-        "K619",
         "N709",
         "G712",
         "R708",
@@ -14,7 +12,6 @@
         "N729",
         "A744",
         "G813",
-        "K815B",
         "B716",
         "R812"
     ],
@@ -26,8 +23,6 @@
     "routes": {
         "A644A": "Canary Islands And Madeira Fly-Cruise",
         "A644B": "Canary Islands And Madeira Fly-Cruise",
-        "A626": "Eastern Mediterranean Fly-Cruise",
-        "K619": "Mediterranean - Spain And France",
         "N709": "Spain And Portugal",
         "G712": "Norwegian Fjords",
         "R708": "Morocco And Cape Verde Discovery",
@@ -38,7 +33,6 @@
         "N729": "Spain And Canary Islands",
         "A744": "Canary Islands And Madeira Fly-Cruise",
         "G813": "Norwegian Fjords",
-        "K815B": "Norwegian Fjords, 12 Nights",
         "B716": "Iceland",
         "R812": "Norway Iceland And North Cape"
     },
