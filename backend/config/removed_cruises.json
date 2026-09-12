@@ -96,5 +96,12 @@
         "cruise_code": "K815B",
         "cruise_name": "Norwegian Fjords, 12 Nights",
         "reason": "sold_out"
+    },
+    {
+        "timestamp": "2026-09-12T12:06:37.212320",
+        "brand": "princess",
+        "cruise_code": "Y628",
+        "cruise_name": "Scandinavia",
+        "reason": "No matching cruise in Metadata"
     }
 ]
