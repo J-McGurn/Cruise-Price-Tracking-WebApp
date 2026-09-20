@@ -103,5 +103,12 @@
         "cruise_code": "Y628",
         "cruise_name": "Scandinavia",
         "reason": "No matching cruise in Metadata"
+    },
+    {
+        "timestamp": "2026-09-20T13:00:16.305600",
+        "brand": "princess",
+        "cruise_code": "4639",
+        "cruise_name": "Inside Passage (Seattle to Vancouver)",
+        "reason": "No matching cruise in Metadata"
     }
 ]
