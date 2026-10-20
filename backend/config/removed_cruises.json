@@ -110,5 +110,12 @@
         "cruise_code": "4639",
         "cruise_name": "Inside Passage (Seattle to Vancouver)",
         "reason": "No matching cruise in Metadata"
+    },
+    {
+        "timestamp": "2026-10-20T13:29:58.353673",
+        "brand": "princess",
+        "cruise_code": "1732",
+        "cruise_name": "Unknown",
+        "reason": "No products found in Metadata"
     }
 ]
