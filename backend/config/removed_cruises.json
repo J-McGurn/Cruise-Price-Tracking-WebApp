@@ -117,5 +117,12 @@
         "cruise_code": "1732",
         "cruise_name": "Unknown",
         "reason": "No products found in Metadata"
+    },
+    {
+        "timestamp": "2026-10-30T14:58:58.008004",
+        "brand": "princess",
+        "cruise_code": "U843",
+        "cruise_name": "Unknown",
+        "reason": "No products found in Metadata"
     }
 ]
