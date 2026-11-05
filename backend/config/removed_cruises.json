@@ -138,5 +138,12 @@
         "cruise_code": "G721",
         "cruise_name": "Unknown",
         "reason": "No products found in Metadata"
+    },
+    {
+        "timestamp": "2026-11-05T16:22:23.224419",
+        "brand": "princess",
+        "cruise_code": "Y632",
+        "cruise_name": "Unknown",
+        "reason": "No matching product in Metadata"
     }
 ]
