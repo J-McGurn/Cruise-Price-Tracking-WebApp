@@ -145,5 +145,12 @@
         "cruise_code": "Y632",
         "cruise_name": "Unknown",
         "reason": "No matching product in Metadata"
+    },
+    {
+        "timestamp": "2026-11-10T16:20:38.189081",
+        "brand": "princess",
+        "cruise_code": "N639A",
+        "cruise_name": "Unknown",
+        "reason": "No matching product in Metadata"
     }
 ]
